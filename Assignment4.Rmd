@@ -1,0 +1,235 @@
+---
+title: "STA238 - Winter 2021"
+author: "GROUP NUMBER: ADD YOUR NAMES HERE"
+date: March 19, 2021
+subtitle: Assignment 4
+output:
+  pdf_document: default
+---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+library(openintro)
+```
+
+
+# Part 1
+## Step 1 (Mathematical Justification)
+
+<Type in your assumptions here.>
+
+
+<Type your derivations of the MLE of $\sigma^2$ here. Be sure to identify the likelihood and loglikelihood functions.>
+
+<Be sure to use the second derivative test.>
+
+<I have provided some useful LaTeX coding examples below.> 
+
+The first is an example of inline math code. To write math text in line with the text we surround the math text (LaTeX code) by one pair of dollar signs (\$).The sample variance formula is $S^2 = \frac{1}{n-1} \sum_{i=1}^n(X_i - \bar{X})^2$. 
+
+The two estimators written on individual lines are done so by putting my math text (LaTeX code) in two sets of dollar signs (\$). See here: $$T_1 = S^2 = \frac{1}{n-1} \sum_{i=1}^n(X_i - \bar{X})^2 $$ $$T_2 = S^{2}_* = \frac{1}{n} \sum_{i=1}^n(X_i - \bar{X})^2 $$ 
+
+Another useful line is $X_1,...,X_n \stackrel{iid}{\sim} Normal(\mu = 0, \sigma^2)$.
+
+Try knitting this to see what it looks like!
+
+## Step 2 (Simulation Justification)
+
+
+<Here you can briefly explain your simulation>
+
+```{r, include = TRUE}
+
+## Here you can code your simulation and create the 3 plots.
+
+## Here is some starter code for the simulation:
+
+set.seed(123) # Set this seed to be the last 3 digits of your student number.
+n = 50 #pre-specify your sample size
+sigma_sq = 1
+
+## Simulating from Normal
+rnorm(n, mean=0, sd=sqrt(sigma_sq))
+
+
+## Create your plots below. (I recommend using ggplot) 
+
+
+## Remember the patchwork package might be helpful.
+
+
+```
+
+<Here you should describe the results of the simulation and the plots.>
+
+<Here you should state your conclusions regarding the trade-offs of the two estimators $T_1$ and $T_2$.>
+
+
+
+<Here is an example of one of the plots. In this example the data is Exponential (with mean parameter, $\theta$) and we are looking at the likelihood evaluated for $\hat\theta$ as the sample mean and sample median. The idea is to produce two plots like this, but for Normal data at the estimators specified previously (one for small $\sigma^2$, one for large $\sigma^2$):>
+
+```{r, fig.width=5, fig.height=3}
+library(tidyverse)
+
+#options(scipen=999)
+
+set.seed(452)
+
+likelihood <- function(theta_hat,xbar,n) theta_hat^(-n)*exp(-n*xbar/theta_hat)
+
+n <- seq(10,80, 10)
+theta = 4
+
+likelihood_ratio <- rep(NA, length(n))
+
+for(i in 1:length(n)){
+  exp_data <- rexp(n, 1/theta)
+  xbar_data <- mean(exp_data)
+  median_data <- median(exp_data)
+  L_xbar <- likelihood(theta_hat = xbar_data, xbar = xbar_data, n=n[i])
+  L_median <- likelihood(theta_hat = median_data, xbar = xbar_data, n=n[i])
+  likelihood_ratio[i] <- L_xbar/L_median
+}
+
+
+tibble(n, likelihood_ratio) %>% 
+    ggplot(aes(x = n)) + 
+    geom_line(aes(y = likelihood_ratio), color = "blue") + 
+    labs(x = "n", y = "likelihood ratio", 
+         title = "Likelihood  Ratio for different n",
+         subtitle = "Mean over Median",
+         color = "" ) + ylim(0,20)
+
+```
+
+
+<Please include some text describing the relationship between the two estimators with respect to likelihood. What is the plot telling us? Are these results in line with what was shown in Step 1?>
+
+
+\newpage
+
+# Part 2
+
+
+## Introduction
+
+<Here you should have a few paragraphs of text introducing the problem, getting the reader interested/ready for the rest of the report.>
+
+<Introduce terminology.>
+
+<Highlight hypotheses.>
+
+<Optional: You can also include a description of each section of this report as a last paragraph.>
+
+
+## Data
+
+<Type here a paragraph introducing the data, its context and the data collection process.>
+
+```{r, include = FALSE}
+
+# Here you can load in and clean the data (you may need to do the cleaning in a separate R script). 
+
+# You may need additional chunks, in case you want to include some of the cleaning output.
+
+```
+
+<Type here a summary of the cleaning process.> 
+
+<Remember, you may want to use multiple datasets here, if you do end up using multiple data sets, or merging the data, be sure to describe this in the cleaning process and be sure to discuss important aspects of all the data that you used.>
+
+<Include a description of the important variables.> 
+
+```{r, include=FALSE}
+
+# Use this to calculate some summary measures. 
+
+```
+
+
+<Include a description of the numerical summaries. Remember you can use `r ` to use inline R code.>
+
+```{r, echo = TRUE}
+
+# Use this to create some plots. 
+
+```
+
+<Include a clear description of the plot(s). I would recommend one paragraph for each plot.> 
+
+
+## Methods
+
+<Include some text introducing the methodology.>
+
+$$ include.your.mathematical.model.here.if.you.have.some.math.to.show $$
+<Here you should describe a CI for the mean.>
+
+<Here you should specify which CI you are using and why.>
+
+<Here you should specifiy the confidence level. You may want to briefly elaborate on why you chose this confidence level. It should NOT be in order to get significant results - that would be an unethical practice.>
+
+
+<Here you should describe the bootstrap.>
+
+
+All analysis for this report was programmed using `R version 4.0.2`. 
+
+
+
+## Results 
+
+
+```{r, include = FALSE}
+
+# Here you can calculate your CIS
+
+# run a bootstrap.
+
+# Here you can derive the CIs from the bootsrtap.
+
+
+
+```
+
+<Here you could present your results. You may want to put them into a well formatted table. Be sure that there is some text describing the results.>
+
+
+<Note: Alternatively you can use the `knitr::kable` function to create a well formatted table from your code. See here: [https://rmarkdown.rstudio.com/lesson-7.html](https://rmarkdown.rstudio.com/lesson-7.html).>
+
+
+
+<Remember you can use `r ` to use inline R code.>
+
+
+```{r, include = FALSE}
+
+# Here you can include some relevant visualizations.
+
+
+```
+
+<Include an explanation/interpretation of the visualizations. Make sure to comment on the appropriateness of the assumptions/results.>
+
+## Conclusions
+
+<Here you should give a summary of the Hypotheses, Methods and Results>
+
+<Highlight Key Results.>
+
+<Talk about big picture.>
+
+<Comment on any Weaknesses.>
+
+<Comment on Future Work/Next Steps>
+
+<End with a concluding paragraph to wrap up the report.>
+
+
+## Bibliography
+
+1. Grolemund, G. (2014, July 16) *Introduction to R Markdown*. RStudio. [https://rmarkdown.rstudio.com/articles_intro.html](https://rmarkdown.rstudio.com/articles_intro.html). (Last Accessed: January 15, 2021) 
+
+2. Dekking, F. M., et al. (2005) *A Modern Introduction to Probability and Statistics: Understanding why and how.* Springer Science & Business Media.
+
+3.  Allaire, J.J., et. el. *References: Introduction to R Markdown*. RStudio. [https://rmarkdown.rstudio.com/docs/](https://rmarkdown.rstudio.com/docs/). (Last Accessed: January 15, 2021) 
